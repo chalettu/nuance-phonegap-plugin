@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+            id="net.ninjaenterprises.nuance" version="0.1.0">
+        <name>Device</name>
+        <description>Cordova Nuance Ndev Plugin</description>
+        <license>Apache 2.0</license>
+        <keywords>cordova,voice_recognition</keywords>
+        <js-module src="www/nuancespeechkit.js" name="ndev">
+            <clobbers target="ndev" />
+        </js-module>
+        <platform name="ios">
+            <config-file target="config.xml" parent="/*">
+                <feature name="ndev">
+                    <param name="ios-package" value="PhoneGapSpeechPlugin"/>
+                </feature>
+            </config-file>
+            <header-file src="src/ios/PhoneGapSpeechPlugin.h" />
+            <source-file src="src/ios/PhoneGapSpeechPlugin.m" />
+
+            <header-file src="src/ios/Credentials.h" />
+            <source-file src="src/ios/Credentials.m" />
+            <header-file src="src/ios/ICredentials.h" />
+
+
+        </platform>
+    </plugin>
