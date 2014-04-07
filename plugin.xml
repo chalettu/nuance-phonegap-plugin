@@ -14,13 +14,14 @@
                     <param name="ios-package" value="PhoneGapSpeechPlugin"/>
                 </feature>
             </config-file>
-
-            <source-file src="src/ios/Credentials.h" />
-            <source-file src="src/ios/Credentials.m" />
-            <source-file src="src/ios/ICredentials.h" />
-            
             <header-file src="src/ios/PhoneGapSpeechPlugin.h" />
             <source-file src="src/ios/PhoneGapSpeechPlugin.m" compiler-flags="-fno-objc-arc" />
+            <header-file src="src/ios/ICredentials.h" />
+            <header-file src="src/ios/Credentials.h" />
+            <source-file src="src/ios/Credentials.m" />
+           
+            
+         
 
     
 
