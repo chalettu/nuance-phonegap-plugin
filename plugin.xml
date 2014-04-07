@@ -20,11 +20,15 @@
             <header-file src="src/ios/Credentials.h" />
             <source-file src="src/ios/Credentials.m" />
            
-            
-         
-
-    
-
-
+            <framework src="AssetsLibrary.framework" />
+            <framework src="Security.framework" />
+            <framework src="Foundation.framework" />
+            <framework src="CoreMedia.framework" />
+            <framework src="MediaPlayer.framework" />
+            <framework src="SystemConfiguration.framework" /> 
+            <framework src="CFNetwork.framework" /> 
+            <framework src="AVFoundation.framework" /> 
+            <framework src="AudioToolbox.framework" /> 
+            <framework src="CoreGraphics.framework" /> 
         </platform>
     </plugin>
