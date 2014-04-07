@@ -15,7 +15,7 @@
                 </feature>
             </config-file>
             <header-file src="src/ios/PhoneGapSpeechPlugin.h" />
-            <source-file src="src/ios/PhoneGapSpeechPlugin.m" />
+            <source-file src="src/ios/PhoneGapSpeechPlugin.m" compiler-flags="-fno-objc-arc" />
 
             <header-file src="src/ios/Credentials.h" />
             <source-file src="src/ios/Credentials.m" />
