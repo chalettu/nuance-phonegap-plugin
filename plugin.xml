@@ -12,6 +12,7 @@
             <config-file target="config.xml" parent="/*">
                 <feature name="NuancePlugin">
                     <param name="ios-package" value="PhoneGapSpeechPlugin"/>
+                    <param name="onload" value="true" />
                 </feature>
             </config-file>
             <header-file src="src/ios/PhoneGapSpeechPlugin.h" />
