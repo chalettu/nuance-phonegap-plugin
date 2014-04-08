@@ -6,13 +6,13 @@
 //
 //
 
-#import "PhoneGapSpeechPlugin.h"
+#import "NuancePlugin.h"
 #import "ICredentials.h"
 #import "Credentials.h"
 #import <SpeechKit/SpeechKit.h>
 
 
-@implementation PhoneGapSpeechPlugin
+@implementation NuancePlugin
 @synthesize recognizerInstance, vocalizer;
 
 BOOL isInitialized = false;

@@ -16,7 +16,7 @@ NuanceSpeechKitPlugin.prototype.initialize = function(credentialClassName,
                                                       successCallback, failureCallback) {
      exec( successCallback,
                          failureCallback,
-                         "PhoneGapSpeechPlugin",
+                         "NuancePlugin",
                          "initSpeechKit",
                          [credentialClassName, serverName, port, sslEnabled]);
 };
@@ -28,7 +28,7 @@ NuanceSpeechKitPlugin.prototype.initialize = function(credentialClassName,
 NuanceSpeechKitPlugin.prototype.cleanup = function(successCallback, failureCallback) {
      exec(successCallback,
                          failureCallback,
-                         "PhoneGapSpeechPlugin",
+                         "NuancePlugin",
                          "cleanupSpeechKit",
                          []);
 };
@@ -43,7 +43,7 @@ NuanceSpeechKitPlugin.prototype.startRecognition = function(recoType, language,
                                                             successCallback, failureCallback) {
      exec(successCallback,
                          failureCallback,
-                         "PhoneGapSpeechPlugin",
+                         "NuancePlugin",
                          "startRecognition",
                          [recoType, language]);
 };
@@ -55,7 +55,7 @@ NuanceSpeechKitPlugin.prototype.startRecognition = function(recoType, language,
 NuanceSpeechKitPlugin.prototype.stopRecognition = function(successCallback, failureCallback) {
      exec(successCallback,
                          failureCallback,
-                         "PhoneGapSpeechPlugin",
+                         "NuancePlugin",
                          "stopRecognition",
                          []);
 };
@@ -67,7 +67,7 @@ NuanceSpeechKitPlugin.prototype.stopRecognition = function(successCallback, fail
 NuanceSpeechKitPlugin.prototype.getResults = function(successCallback, failureCallback) {
     exec(successCallback,
                          failureCallback,
-                         "PhoneGapSpeechPlugin",
+                         "NuancePlugin",
                          "getRecoResult",
                          []);
 };
@@ -83,7 +83,7 @@ NuanceSpeechKitPlugin.prototype.playTTS = function(text, language, voice,
                                                    successCallback, failureCallback) {
      exec(successCallback,
                          failureCallback,
-                         "PhoneGapSpeechPlugin",
+                         "NuancePlugin",
                          "startTTS",
                          [text, language, voice]);
 };
@@ -98,7 +98,7 @@ NuanceSpeechKitPlugin.prototype.playTTS = function(text, language, voice,
 NuanceSpeechKitPlugin.prototype.stopTTS = function(successCallback, failureCallback) {
      exec(successCallback,
                          failureCallback,
-                         "PhoneGapSpeechPlugin",
+                         "NuancePlugin",
                          "stopTTS",
                          []);
 };

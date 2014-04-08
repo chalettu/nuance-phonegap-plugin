@@ -11,12 +11,12 @@
         <platform name="ios">
             <config-file target="config.xml" parent="/*">
                 <feature name="NuancePlugin">
-                    <param name="ios-package" value="PhoneGapSpeechPlugin"/>
+                    <param name="ios-package" value="NuancePlugin"/>
                     <param name="onload" value="true" />
                 </feature>
             </config-file>
-            <header-file src="src/ios/PhoneGapSpeechPlugin.h" />
-            <source-file src="src/ios/PhoneGapSpeechPlugin.m" compiler-flags="-fno-objc-arc" />
+            <header-file src="src/ios/NuancePlugin.h" />
+            <source-file src="src/ios/NuancePlugin.m" compiler-flags="-fno-objc-arc" />
             <header-file src="src/ios/ICredentials.h" />
             <header-file src="src/ios/Credentials.h" />
             <source-file src="src/ios/Credentials.m" />

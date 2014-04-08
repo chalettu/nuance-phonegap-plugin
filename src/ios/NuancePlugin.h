@@ -67,7 +67,7 @@ const NSString* KEY_EVENT = @"event";
 const NSString* KEY_RESULT = @"result";
 const NSString* KEY_RESULTS = @"results";
 
-@interface PhoneGapSpeechPlugin : CDVPlugin <SpeechKitDelegate, SKVocalizerDelegate, SKRecognizerDelegate>{
+@interface NuancePlugin : CDVPlugin <SpeechKitDelegate, SKVocalizerDelegate, SKRecognizerDelegate>{
     
   BOOL isSpeaking;
   BOOL isRecording;
