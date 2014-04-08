@@ -1,8 +1,7 @@
 var exec = require("cordova/exec");
 
 
-function NuanceSpeechKitPlugin() {
-};
+function NuanceSpeechKitPlugin() {}
 
 // **Initialize speech kit**
 //
@@ -15,7 +14,7 @@ function NuanceSpeechKitPlugin() {
 NuanceSpeechKitPlugin.prototype.initialize = function(credentialClassName,
                                                       serverName, port, sslEnabled,
                                                       successCallback, failureCallback) {
-    return exec( successCallback,
+     exec( successCallback,
                          failureCallback,
                          "PhoneGapSpeechPlugin",
                          "initSpeechKit",
@@ -27,7 +26,7 @@ NuanceSpeechKitPlugin.prototype.initialize = function(credentialClassName,
 // `successCallback` The callback function for success  
 // `failureCallback` The callback function for error  
 NuanceSpeechKitPlugin.prototype.cleanup = function(successCallback, failureCallback) {
-    return exec(successCallback,
+     exec(successCallback,
                          failureCallback,
                          "PhoneGapSpeechPlugin",
                          "cleanupSpeechKit",
@@ -42,7 +41,7 @@ NuanceSpeechKitPlugin.prototype.cleanup = function(successCallback, failureCallb
 // `failureCallback`  The callback function for error  
 NuanceSpeechKitPlugin.prototype.startRecognition = function(recoType, language,
                                                             successCallback, failureCallback) {
-    return exec(successCallback,
+     exec(successCallback,
                          failureCallback,
                          "PhoneGapSpeechPlugin",
                          "startRecognition",
@@ -54,7 +53,7 @@ NuanceSpeechKitPlugin.prototype.startRecognition = function(recoType, language,
 // `successCallback`  The callback function for success  
 // `failureCallback`  The callback function for error  
 NuanceSpeechKitPlugin.prototype.stopRecognition = function(successCallback, failureCallback) {
-    return Cordova.exec(successCallback,
+     exec(successCallback,
                          failureCallback,
                          "PhoneGapSpeechPlugin",
                          "stopRecognition",
@@ -66,7 +65,7 @@ NuanceSpeechKitPlugin.prototype.stopRecognition = function(successCallback, fail
 // `successCallback` The callback function for success  
 // `failureCallback` The callback function for error  
 NuanceSpeechKitPlugin.prototype.getResults = function(successCallback, failureCallback) {
-    return Cordova.exec(successCallback,
+    exec(successCallback,
                          failureCallback,
                          "PhoneGapSpeechPlugin",
                          "getRecoResult",
@@ -82,7 +81,7 @@ NuanceSpeechKitPlugin.prototype.getResults = function(successCallback, failureCa
 // `failureCallback`  The callback function for error  
 NuanceSpeechKitPlugin.prototype.playTTS = function(text, language, voice,
                                                    successCallback, failureCallback) {
-    return exec(successCallback,
+     exec(successCallback,
                          failureCallback,
                          "PhoneGapSpeechPlugin",
                          "startTTS",
@@ -97,7 +96,7 @@ NuanceSpeechKitPlugin.prototype.playTTS = function(text, language, voice,
 // `successCallback`  The callback function for success  
 // `failureCallback`  The callback function for error  
 NuanceSpeechKitPlugin.prototype.stopTTS = function(successCallback, failureCallback) {
-    return exec(successCallback,
+     exec(successCallback,
                          failureCallback,
                          "PhoneGapSpeechPlugin",
                          "stopTTS",
