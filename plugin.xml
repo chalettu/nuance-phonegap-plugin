@@ -5,12 +5,12 @@
         <description>Cordova Nuance Ndev Plugin</description>
         <license>Apache 2.0</license>
         <keywords>cordova,voice_recognition</keywords>
-        <js-module src="www/nuancespeechkit.js" name="ndev">
-            <clobbers target="ndev" />
+        <js-module src="www/nuancespeechkit.js" name="NuancePlugin">
+            <clobbers target="NuancePlugin" />
         </js-module>
         <platform name="ios">
             <config-file target="config.xml" parent="/*">
-                <feature name="ndev">
+                <feature name="NuancePlugin">
                     <param name="ios-package" value="PhoneGapSpeechPlugin"/>
                 </feature>
             </config-file>

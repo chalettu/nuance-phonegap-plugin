@@ -103,6 +103,6 @@ NuanceSpeechKitPlugin.prototype.stopTTS = function(successCallback, failureCallb
                          []);
 };
 
- var nuanceplugin = new NuanceSpeechKitPlugin();
-        module.exports = nuanceplugin;
+ var NuancePlugin = new NuanceSpeechKitPlugin();
+        module.exports = NuancePlugin;
 	
