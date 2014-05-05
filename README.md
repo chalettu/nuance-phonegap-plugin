@@ -16,5 +16,8 @@ Installation Instructions:
 
 cordova plugin add https://github.com/chalettu/nuance-phonegap-plugin.git
 
+4.  Configure the plugin with your 
 
+5. 
 
+![alt tag](https://raw.github.com/chalettu/nuance-phonegap-plugin/master/readme_resources/plugin_pic_1.png)
