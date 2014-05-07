@@ -48,6 +48,24 @@ NuanceSpeechKitPlugin.prototype.startRecognition = function(recoType, language,
                          [recoType, language]);
 };
 
+//These two functions deal with checking status of recording
+
+NuanceSpeechKitPlugin.prototype.hasRecordingStarted = function(successCallback, failureCallback) {
+     exec(successCallback,
+                         failureCallback,
+                         "NuancePlugin",
+                         "recognizerDidBeginRecording",
+                         []);
+};
+
+NuanceSpeechKitPlugin.prototype.hasRecordingStopped = function(successCallback, failureCallback) {
+     exec(successCallback,
+                         failureCallback,
+                         "NuancePlugin",
+                         "recognizerDidFinishRecording",
+                         []);
+};
+
 // **Stops speech recognition**
 //
 // `successCallback`  The callback function for success  
