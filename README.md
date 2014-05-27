@@ -11,13 +11,16 @@ Installation Instructions:
 
 2. Download the IOS SDK
 
+3.  Add the IOS SDK .framework file as Nuance instructs you to in there installation directions.
 
-3.  Install this plugin to your cordova project
+4.  Install this plugin to your cordova project
 
 cordova plugin add https://github.com/chalettu/nuance-phonegap-plugin.git
 
-4.  Configure the plugin with your 
-
-5. 
-
+5.  Configure the plugin with your credentials in the Plugins/credentials.m file
 ![alt tag](https://raw.github.com/chalettu/nuance-phonegap-plugin/master/readme_resources/plugin_pic_1.png)
+![alt tag](https://raw.github.com/chalettu/nuance-phonegap-plugin/master/readme_resources/plugin_step2.png)
+
+6. At this point you should be able to do a cordova build ios and have your project compile successfully
+
+7.  I am working on getting more detailed documentation on some of the javascript calls but in the mean time if you have questions feel free to ask a question about how to use this plugin.
