@@ -1,17 +1,17 @@
 
-package net.ninjaenterprises.nuance.NuancePlugin;
+package net.ninjaenterprises.nuance;
 
-import org.apache.cordova.api.CallbackContext;
-import org.apache.cordova.api.PluginResult.Status;
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import net.ninjaenterprises.nuance.Credentials;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import org.apache.cordova.api.CordovaPlugin;
-import org.apache.cordova.api.PluginResult;
 
 import com.nuance.nmdp.speechkit.*;
 
@@ -21,19 +21,19 @@ import com.nuance.nmdp.speechkit.*;
  *
  */
 public class NuancePlugin extends CordovaPlugin{
-
+    
 	/**
 	 * Action to initialize speech kit
 	 */
-	public static final String ACTION_INIT = "init";
+	public static final String ACTION_INIT = "initSpeechKit";
 	/**
 	 * Action to start recognition
 	 */
-	public static final String ACTION_START_RECO = "startReco";
+	public static final String ACTION_START_RECO = "startRecognition";
 	/**
 	 * Action to stop recognition
 	 */
-	public static final String ACTION_STOP_RECO = "stopReco";
+	public static final String ACTION_STOP_RECO = "stopRecognition";
 	/**
 	 * Action to get recognition results
 	 */
@@ -140,8 +140,8 @@ public class NuancePlugin extends CordovaPlugin{
 	 * Call back event - TTS playback complete
 	 */
 	public static final String EVENT_TTS_COMPLETE = "TTSComplete";
-
-
+    
+    
 	// variables to support recognition
 	/**
 	 * Speech kit reference
@@ -172,7 +172,7 @@ public class NuancePlugin extends CordovaPlugin{
      * ID provided to invoke callback function.
      */
     private CallbackContext recognitionCallbackContext = null;
-
+    
     // variables to support TTS
 	/**
 	 * Vocalizer reference for text to speech
@@ -187,32 +187,32 @@ public class NuancePlugin extends CordovaPlugin{
      */
     private CallbackContext ttsCallbackContext = null;
     
-    
+    public CallbackContext callbackContext;
     /**
      * Method to initiate calls from PhoneGap/javascript API
-     * 
+     *
      * @param action
      * The action method
-     * 
+     *
      * @param data
      * Incoming parameters
-     * 
+     *
      * @param callbackId
      * The call back id
      */
 	public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
-
+        
 		Log.d("NuancePlugin", "NuancePlugin.execute: Entered method. Action = ["+action+"] Call Back Context = ["+callbackContext+"]");
 		
 		PluginResult result = null;
-
+        
 		try{
 			
 			if (ACTION_INIT.equals(action)) { // INITALIZE
 				// initialize sppech kit
 				result = initSpeechKit(data, callbackContext);
 			}
-			else if (ACTION_CLEANUP.equals(action)) {  // CLEANUP 
+			else if (ACTION_CLEANUP.equals(action)) {  // CLEANUP
 				result = cleanupSpeechKit(data, callbackContext);
 			}
 			else if (ACTION_START_RECO.equals(action)) {  // START RECOGNITION
@@ -226,7 +226,7 @@ public class NuancePlugin extends CordovaPlugin{
 				result = getRecoResult(data, callbackContext);
 			}
 			else if (ACTION_PLAY_TTS.equals(action)) {  // START TTS PLAYBACK
-				Log.d("NuancePlugin", "NuancePlugin.execute: Call to start TTS.");				
+				Log.d("NuancePlugin", "NuancePlugin.execute: Call to start TTS.");
 				result = startTTS(data, callbackContext);
 			}
 			else if (ACTION_STOP_TTS.equals(action)) {  // START TTS PLAYBACK
@@ -234,30 +234,30 @@ public class NuancePlugin extends CordovaPlugin{
 				result = stopTTS(data, callbackContext);
 			}
 			else if (ACTION_QUERY_NEXT_EVENT.equals(action)) {  // add callback for next event
-					
+                
 				Log.d("NuancePlugin", "NuancePlugin.execute: Call to query next event.");
 				JSONObject returnObject = new JSONObject();
 				
 				ttsCallbackContext = callbackContext;
-						
+                
 				setReturnCode(returnObject, RC_SUCCESS, "Query Success");
-				result = new PluginResult(Status.OK, returnObject);
+				result = new PluginResult(PluginResult.Status.OK, returnObject);
 			}
 			else {
-				result = new PluginResult(Status.INVALID_ACTION);
+				result = new PluginResult(PluginResult.Status.INVALID_ACTION);
 				Log.e("NuancePlugin", "NuancePlugin.execute: Invalid action ["+action+"] passed");
 			}
-
+            
 		}
 		catch (JSONException jsonEx) {
 			Log.e("NuancePlugin", "NuancePlugin.execute: ["+action+"] Got JSON Exception "+ jsonEx.getMessage(), jsonEx);
-			result = new PluginResult(Status.JSON_EXCEPTION);
+			result = new PluginResult(PluginResult.Status.JSON_EXCEPTION);
 		}
 		catch (Exception e){
 			Log.e("NuancePlugin", "NuancePlugin.execute: ["+action+"] Got Exception "+ e.getMessage(), e);
-			result = new PluginResult(Status.ERROR);				
+			result = new PluginResult(PluginResult.Status.ERROR);
 		}
-
+        
 		callbackContext.sendPluginResult(result);
 		Log.d("NuancePlugin", "NuancePlugin.execute: Leaving method.");
 		return true;
@@ -265,16 +265,16 @@ public class NuancePlugin extends CordovaPlugin{
 	
 	/**
 	 * Method to initialize speech kit.
-	 * 
+	 *
 	 * @param data
 	 * The data object passed into exec
-	 * 
+	 *
 	 * @param callbackId
 	 * The callback id passed into exec
-	 * 
+	 *
 	 * @return PluginResult
 	 * The populated PluginResult
-	 * 
+	 *
 	 * @throws JSONException
 	 */
 	private PluginResult initSpeechKit(JSONArray data, CallbackContext callbackContext) throws JSONException{
@@ -283,7 +283,8 @@ public class NuancePlugin extends CordovaPlugin{
 		Log.d("NuancePlugin", "NuancePlugin.initSpeechKit: Entered method.");
 		
 		// Get parameters to do initialization
-		String credentialClassName = data.getString(0);
+		String credentialClassName = "net.ninjaenterprises.nuance.Credentials";
+		
 		Log.d("NuancePlugin", "NuancePlugin.initSpeechKit: init: Credential Class = ["+credentialClassName+"]");
 		String serverName = data.getString(1);
 		Log.d("NuancePlugin", "NuancePlugin.initSpeechKit: init: Server = ["+serverName+"]");
@@ -291,14 +292,14 @@ public class NuancePlugin extends CordovaPlugin{
 		Log.d("NuancePlugin", "NuancePlugin.initSpeechKit: init: Port = ["+port+"]");
 		boolean sslEnabled = data.getBoolean(3);
 		Log.d("NuancePlugin", "NuancePlugin.initSpeechKit: init: SSL = ["+sslEnabled+"]");
-
+        
 		JSONObject returnObject = new JSONObject();
 		
 		try{
 	        if (speechKit == null){
 	        	
 	        	Class credentialClass = Class.forName(credentialClassName);
-	        	ICredentials credentials = (ICredentials)credentialClass.newInstance(); 
+	        	ICredentials credentials = (ICredentials)credentialClass.newInstance();
 	        	
 	        	String appId = credentials.getAppId();
 	        	byte[] appKey = credentials.getAppKey();
@@ -312,13 +313,13 @@ public class NuancePlugin extends CordovaPlugin{
 	        
 	        setReturnCode(returnObject, RC_SUCCESS, "Init Success");
 	        returnObject.put("event", EVENT_INIT_COMPLETE);
-			result = new PluginResult(Status.OK, returnObject);
+			result = new PluginResult(PluginResult.Status.OK, returnObject);
 			result.setKeepCallback(false);
 		}
 		catch(Exception e){
 			Log.e("NuancePlugin", "NuancePlugin.initSpeechKit: Error initalizing:" +e.getMessage(), e);
 			setReturnCode(returnObject, RC_FAILURE, e.toString());
-			result = new PluginResult(Status.OK, returnObject);
+			result = new PluginResult(PluginResult.Status.OK, returnObject);
 		}
 		
 		Log.d("NuancePlugin", "NuancePlugin.initSpeechKit: Leaving method.");
@@ -328,17 +329,17 @@ public class NuancePlugin extends CordovaPlugin{
 	
 	/**
 	 * Cleans up speech kit variables if they have been initialized
-	 * 
+	 *
 	 * @param data
 	 * @param callbackId
 	 * @return
 	 * @throws JSONException
 	 */
 	private PluginResult cleanupSpeechKit(JSONArray data, CallbackContext callbackContext) throws JSONException{
-
+        
 		Log.d("NuancePlugin", "NuancePlugin.cleanupSpeechKit: Entered method.");
 		PluginResult result = null;
-
+        
 		if (vocalizerInstance != null){
 			try{
 				vocalizerInstance.cancel();
@@ -367,11 +368,11 @@ public class NuancePlugin extends CordovaPlugin{
 			speechKit = null;
 			Log.d("NuancePlugin", "NuancePlugin.cleanupSpeechKit: Speech kit released.");
 		}
-
+        
 		JSONObject returnObject = new JSONObject();
-		setReturnCode(returnObject, RC_SUCCESS, "Cleanup Success");			
+		setReturnCode(returnObject, RC_SUCCESS, "Cleanup Success");
 		returnObject.put("event", EVENT_CLEANUP_COMPLETE);
-		result = new PluginResult(Status.OK, returnObject);
+		result = new PluginResult(PluginResult.Status.OK, returnObject);
 		
 		Log.d("NuancePlugin", "NuancePlugin.cleanupSpeechKit: Leaving method.");
 		return result;
@@ -379,7 +380,7 @@ public class NuancePlugin extends CordovaPlugin{
 	
 	/**
 	 * Starts recognition.
-	 * 
+	 *
 	 * @param data
 	 * @param callbackId
 	 * @return
@@ -395,13 +396,13 @@ public class NuancePlugin extends CordovaPlugin{
 			Log.d("NuancePlugin", "NuancePlugin.execute: LISTENER IS NOT NULL");
 		}
 		if (speechKit != null){
-	
+            
 			// get the recognition type
 			String recognitionType = data.getString(0);
 			Log.d("NuancePlugin", "NuancePlugin.execute: startReco: Reco Type = ["+recognitionType+"]");
 			String recognizerType = Recognizer.RecognizerType.Dictation;
 			if ("websearch".equalsIgnoreCase(recognitionType)){
-				recognizerType = Recognizer.RecognizerType.Search;						
+				recognizerType = Recognizer.RecognizerType.Search;
 			}
 			// get the language
 			String language = data.getString(1);
@@ -411,23 +412,23 @@ public class NuancePlugin extends CordovaPlugin{
 			lastResult = null;
 			handler = new Handler();
 			recoListener = createListener();
-
+            
 			// create and start the recognizer reference
 			currentRecognizer = speechKit.createRecognizer(recognizerType, Recognizer.EndOfSpeechDetection.Long, language, recoListener, handler);
 			currentRecognizer.start();
-
-	
+            
+            
 			Log.d("NuancePlugin", "NuancePlugin.execute: Recognition started.");
 			setReturnCode(returnObject, RC_SUCCESS, "Reco Start Success");
-			returnObject.put("event", EVENT_RECO_STARTED);			        	
+			returnObject.put("event", EVENT_RECO_STARTED);
 			
 		}
 		else{
 			Log.e("NuancePlugin", "NuancePlugin.execute: Speech kit was null, initialize not called.");
-			setReturnCode(returnObject, RC_NOT_INITIALIZED, "Reco Start Failure: Speech Kit not initialized.");			        	
+			setReturnCode(returnObject, RC_NOT_INITIALIZED, "Reco Start Failure: Speech Kit not initialized.");
 		}
-	
-		result = new PluginResult(Status.OK, returnObject);
+        
+		result = new PluginResult(PluginResult.Status.OK, returnObject);
 		result.setKeepCallback(true);
 		Log.d("NuancePlugin", "NuancePlugin.startRecognition: Leaving method.");
 		return result;
@@ -436,7 +437,7 @@ public class NuancePlugin extends CordovaPlugin{
 	
 	/**
 	 * Stops recognition.
-	 * 
+	 *
 	 * @param data
 	 * @param callbackId
 	 * @return
@@ -445,23 +446,23 @@ public class NuancePlugin extends CordovaPlugin{
 	private PluginResult stopRecognition(JSONArray data, CallbackContext callbackContext) throws JSONException{
 		
 		Log.d("NuancePlugin", "NuancePlugin.stopRecognition: Entered method.");
-		PluginResult result = null;		
+		PluginResult result = null;
 		JSONObject returnObject = new JSONObject();
-
+        
 		if (currentRecognizer != null){
 			// stop the recognizer
 			currentRecognizer.stopRecording();
 			Log.d("NuancePlugin", "NuancePlugin.execute: Recognition started.");
 			setReturnCode(returnObject, RC_SUCCESS, "Reco Stop Success");
-			returnObject.put("event", EVENT_RECO_STOPPED);			        	
-
+			returnObject.put("event", EVENT_RECO_STOPPED);
+            
 		}
 		else{
 			Log.e("NuancePlugin", "NuancePlugin.execute: Recognizer was null, start not called.");
 			setReturnCode(returnObject, RC_RECO_NOT_STARTED, "Reco Stop Failure: Recognizer not started.");
 		}
-
-		result = new PluginResult(Status.OK, returnObject);
+        
+		result = new PluginResult(PluginResult.Status.OK, returnObject);
 		Log.d("NuancePlugin", "NuancePlugin.stopRecognition: Leaving method.");
 		return result;
 		
@@ -478,9 +479,9 @@ public class NuancePlugin extends CordovaPlugin{
 	private PluginResult getRecoResult(JSONArray data, CallbackContext callbackContext) throws JSONException{
 		
 		Log.d("NuancePlugin", "NuancePlugin.getRecoResult: Entered method.");
-		PluginResult result = null;		
+		PluginResult result = null;
 		JSONObject returnObject = new JSONObject();
-
+        
 		if (lastResult != null){
 			setReturnCode(returnObject, RC_SUCCESS, "Success");
             String resultString = getResultString(lastResult);
@@ -495,7 +496,7 @@ public class NuancePlugin extends CordovaPlugin{
 			setReturnCode(returnObject, RC_RECO_NO_RESULT_AVAIL, "No result available.");
 		}
 		
-		result = new PluginResult(Status.OK, returnObject);
+		result = new PluginResult(PluginResult.Status.OK, returnObject);
 		Log.d("NuancePlugin", "NuancePlugin.getRecoResult: Leaving method.");
 		return result;
 		
@@ -505,7 +506,7 @@ public class NuancePlugin extends CordovaPlugin{
 	
 	/**
 	 * Starts TTS playback.
-	 * 
+	 *
 	 * @param data
 	 * @param callbackId
 	 * @return
@@ -530,52 +531,52 @@ public class NuancePlugin extends CordovaPlugin{
 			setReturnCode(returnObject, RC_TTS_TEXT_INVALID, "TTS Text Invalid");
 		}
 		else
-		if ((language == null) && (voice == null)){
-			setReturnCode(returnObject, RC_TTS_PARAMS_INVALID, "Invalid language or voice.");
-		}
-		else
-		if (speechKit != null){
-			if (vocalizerInstance == null){
-				Vocalizer.Listener vocalizerListener = createVocalizerListener();
-				Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Created vocalizer listener.");
-
-				if (language != null){
-					vocalizerInstance = speechKit.createVocalizerWithLanguage(language, vocalizerListener, new Handler());
-				}
-				else{
-					vocalizerInstance = speechKit.createVocalizerWithVoice(voice, vocalizerListener, new Handler());
-				}
-				_lastTtsContext = new Object();
-				Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Calling speakString.");
-				vocalizerInstance.speakString(ttsText, _lastTtsContext);
-				Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Called speakString.");
-	
-				Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Created vocalizer.");
-			}
-			else{
-				if (language != null){
-					vocalizerInstance.setLanguage(language);
-				}
-				else{
-					vocalizerInstance.setVoice(voice);
-				}
-			
-				_lastTtsContext = new Object();
-				Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Calling speakString.");
-			
-				vocalizerInstance.speakString(ttsText, _lastTtsContext);
-			
-				Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Called speakString.");
-			}
-			
-			setReturnCode(returnObject, RC_SUCCESS, "Success");
-		}
-		else{
-			Log.e("NuancePlugin", "NuancePlugin.execute: Speech kit was null, initialize not called.");
-			setReturnCode(returnObject, RC_NOT_INITIALIZED, "TTS Start Failure: Speech Kit not initialized.");			        	
-		}
+            if ((language == null) && (voice == null)){
+                setReturnCode(returnObject, RC_TTS_PARAMS_INVALID, "Invalid language or voice.");
+            }
+            else
+                if (speechKit != null){
+                    if (vocalizerInstance == null){
+                        Vocalizer.Listener vocalizerListener = createVocalizerListener();
+                        Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Created vocalizer listener.");
+                        
+                        if (language != null){
+                            vocalizerInstance = speechKit.createVocalizerWithLanguage(language, vocalizerListener, new Handler());
+                        }
+                        else{
+                            vocalizerInstance = speechKit.createVocalizerWithVoice(voice, vocalizerListener, new Handler());
+                        }
+                        _lastTtsContext = new Object();
+                        Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Calling speakString.");
+                        vocalizerInstance.speakString(ttsText, _lastTtsContext);
+                        Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Called speakString.");
+                        
+                        Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Created vocalizer.");
+                    }
+                    else{
+                        if (language != null){
+                            vocalizerInstance.setLanguage(language);
+                        }
+                        else{
+                            vocalizerInstance.setVoice(voice);
+                        }
+                        
+                        _lastTtsContext = new Object();
+                        Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Calling speakString.");
+                        
+                        vocalizerInstance.speakString(ttsText, _lastTtsContext);
+                        
+                        Log.d("NuancePlugin", "NuancePlugin.execute: startTTS: Called speakString.");
+                    }
+                    
+                    setReturnCode(returnObject, RC_SUCCESS, "Success");
+                }
+                else{
+                    Log.e("NuancePlugin", "NuancePlugin.execute: Speech kit was null, initialize not called.");
+                    setReturnCode(returnObject, RC_NOT_INITIALIZED, "TTS Start Failure: Speech Kit not initialized.");
+                }
 		
-		result = new PluginResult(Status.OK, returnObject);
+		result = new PluginResult(PluginResult.Status.OK, returnObject);
 		result.setKeepCallback(true);
 		
 		Log.d("NuancePlugin", "NuancePlugin.startTTS: Leaving method.");
@@ -585,14 +586,14 @@ public class NuancePlugin extends CordovaPlugin{
 	
 	/**
 	 * Stops TTS playback
-	 * 
+	 *
 	 * @param data
 	 * @param callbackId
 	 * @return
 	 * @throws JSONException
 	 */
 	private PluginResult stopTTS(JSONArray data, CallbackContext callbackContext) throws JSONException{
-
+        
 		Log.d("NuancePlugin", "NuancePlugin.stopTTS: Entered method.");
 		PluginResult result = null;
 		JSONObject returnObject = new JSONObject();
@@ -604,12 +605,12 @@ public class NuancePlugin extends CordovaPlugin{
 			Log.d("NuancePlugin", "NuancePlugin.execute: stopTTS: Vocalizer cancelled.");
 			setReturnCode(returnObject, RC_SUCCESS, "Success");
 			returnObject.put("event", EVENT_TTS_COMPLETE);
-
+            
 		}
 		else{
 			setReturnCode(returnObject, RC_TTS_NOT_STARTED, "TTS Stop Failure: TTS not started.");
 		}
-		result = new PluginResult(Status.OK, returnObject);
+		result = new PluginResult(PluginResult.Status.OK, returnObject);
 		Log.d("NuancePlugin", "NuancePlugin.stopTTS: Leaving method.");
 		return result;
 		
@@ -631,9 +632,9 @@ public class NuancePlugin extends CordovaPlugin{
     private Recognizer.Listener createListener()
     {
         return new Recognizer.Listener()
-        {            
-
-            public void onRecordingBegin(Recognizer recognizer) 
+        {
+            
+            public void onRecordingBegin(Recognizer recognizer)
             {
             	Log.d("NuancePlugin", "Recording...");
             	recording = true;
@@ -643,16 +644,16 @@ public class NuancePlugin extends CordovaPlugin{
 					setReturnCode(returnObject, RC_SUCCESS, "Recording Started");
 					returnObject.put("event", EVENT_RECO_STARTED);
 					
-		            PluginResult result = new PluginResult(Status.OK, returnObject);
+		            PluginResult result = new PluginResult(PluginResult.Status.OK, returnObject);
 		            result.setKeepCallback(true);
 		            android.util.Log.d("NuancePlugin", "NuancePlugin: NuancePlugin: Recognizer.Listener.onRecordingDone: Reco Started... success: "+recognitionCallbackContext);
 		            recognitionCallbackContext.sendPluginResult(result);
-
+                    
 	            }
 	            catch(JSONException je){
 	                android.util.Log.e("NuancePlugin", "NuancePlugin: Recognizer.Listener.onRecordingBegin: Error setting return: "+je.getMessage(), je);
 	            }
-
+                
                 Runnable r = new Runnable()
                 {
                     public void run()
@@ -664,12 +665,12 @@ public class NuancePlugin extends CordovaPlugin{
             					//setReturnCode(returnObject, RC_SUCCESS, "OK");
             					returnObject.put("event", EVENT_RECO_VOLUME_UPDATE);
             					returnObject.put("volumeLevel", Float.toString(currentRecognizer.getAudioLevel()));
-
-            					PluginResult result = new PluginResult(Status.OK, returnObject);
+                                
+            					PluginResult result = new PluginResult(PluginResult.Status.OK, returnObject);
             		            result.setKeepCallback(true);
-
+                                
             		            recognitionCallbackContext.sendPluginResult(result);
-
+                                
             	            }
             	            catch(JSONException je){
             	                android.util.Log.e("NuancePlugin", "NuancePlugin: Recognizer.Listener.onRecordingDone: Error setting return: "+je.getMessage(), je);
@@ -677,14 +678,14 @@ public class NuancePlugin extends CordovaPlugin{
                             //_listeningDialog.setLevel(Float.toString(_currentRecognizer.getAudioLevel()));
                             handler.postDelayed(this, 500);
                         }
-
+                        
                     }
                 };
                 r.run();
 	            
             }
-
-            public void onRecordingDone(Recognizer recognizer) 
+            
+            public void onRecordingDone(Recognizer recognizer)
             {
             	Log.d("NuancePlugin", "Processing...");
             	recording = false;
@@ -692,8 +693,8 @@ public class NuancePlugin extends CordovaPlugin{
 	            	JSONObject returnObject = new JSONObject();
 					setReturnCode(returnObject, RC_SUCCESS, "Processing");
 					returnObject.put("event", EVENT_RECO_PROCESSING);
-
-					PluginResult result = new PluginResult(Status.OK, returnObject);
+                    
+					PluginResult result = new PluginResult(PluginResult.Status.OK, returnObject);
 		            result.setKeepCallback(true);
 		            android.util.Log.d("NuancePlugin", "NuancePlugin: NuancePlugin: Recognizer.Listener.onRecordingDone: Reco Done... success: "+recognitionCallbackContext);
 		            recognitionCallbackContext.sendPluginResult(result);
@@ -702,7 +703,7 @@ public class NuancePlugin extends CordovaPlugin{
 	                android.util.Log.e("NuancePlugin", "NuancePlugin: Recognizer.Listener.onRecordingDone: Error setting return: "+je.getMessage(), je);
 	            }
             }
-
+            
             /**
              * Handle error event and call error callback function
              */
@@ -731,7 +732,7 @@ public class NuancePlugin extends CordovaPlugin{
                 // for debugging purpose: printing out the speechkit session id
                 android.util.Log.d("NuancePlugin", "Recognizer.Listener.onError: "+error);
             }
-
+            
             /**
              * Get results and call the success callback function
              */
@@ -778,8 +779,8 @@ public class NuancePlugin extends CordovaPlugin{
      */
     private JSONArray getResultArray(Recognition.Result[] results) throws JSONException {
     	JSONArray resultArray = new JSONArray();
-
-    	int resultCount = results.length; 
+        
+    	int resultCount = results.length;
         if (resultCount > 0)
         {
         	Log.d("NuancePlugin", "Recognizer.Listener.onResults: Result count: "+resultCount);
@@ -790,7 +791,7 @@ public class NuancePlugin extends CordovaPlugin{
             	tempResult.put("confidence", results[i].getScore());
             	resultArray.put(tempResult);
             }
-        } 
+        }
         return resultArray;
     }
     
@@ -802,23 +803,23 @@ public class NuancePlugin extends CordovaPlugin{
     private String getResultString(Recognition.Result[] results)
     {
     	String output = "";
-
+        
         if (results.length > 0)
         {
             output = results[0].getText();
             
             //for (int i = 0; i < results.length; i++)
             //    _.add("[" + results[i].getScore() + "]: " + results[i].getText());
-        } 
+        }
         return output;
         
     }
-
     
-
+    
+    
     Vocalizer.Listener createVocalizerListener(){
     	
-    
+        
 	    return new Vocalizer.Listener()
 	    {
 	        @Override
@@ -837,16 +838,16 @@ public class NuancePlugin extends CordovaPlugin{
                 }
                 android.util.Log.d("NuancePlugin", "NuancePlugin: Vocalizer.Listener.onSpeakingBegin: TTS Started... success: "+ttsCallbackContext);
                 // SETTING THIS EVENT DOES NOT ALLOW THE CALL TO SUCCESS LATER WITH COMPLETE
-                PluginResult result = new PluginResult(Status.OK, returnObject);
+                PluginResult result = new PluginResult(PluginResult.Status.OK, returnObject);
                 result.setKeepCallback(true);
                 ttsCallbackContext.sendPluginResult(result);
 	        	
 	            // for debugging purpose: printing out the speechkit session id
 	            android.util.Log.d("NuancePlugin", "NuancePlugin: Vocalizer.Listener.onSpeakingBegin: Leaving method.");
 	        }
-	
+            
 	        @Override
-	        public void onSpeakingDone(Vocalizer vocalizer, String text, SpeechError error, Object context) 
+	        public void onSpeakingDone(Vocalizer vocalizer, String text, SpeechError error, Object context)
 	        {
 	        	android.util.Log.d("NuancePlugin", "NuancePlugin: Vocalizer.Listener.onSpeakingDone: Context = ["+context+"], last context = "+_lastTtsContext);
 	            // Use the context to detemine if this was the final TTS phrase
@@ -865,10 +866,10 @@ public class NuancePlugin extends CordovaPlugin{
 	                    android.util.Log.e("NuancePlugin", "NuancePlugin: Vocalizer.Listener.onSpeakingDone: Error setting return: "+je.getMessage(), je);
 	                }
 	                android.util.Log.d("NuancePlugin", "NuancePlugin: Vocalizer.Listener.onSpeakingDone: TTS Playing... success: "+ttsCallbackContext);
-	                PluginResult result = new PluginResult(Status.OK, returnObject);
+	                PluginResult result = new PluginResult(PluginResult.Status.OK, returnObject);
 	                result.setKeepCallback(true);
 	                ttsCallbackContext.sendPluginResult(result);
-
+                    
 	            }
 	            else
 	            {
@@ -884,16 +885,16 @@ public class NuancePlugin extends CordovaPlugin{
 	                }
 	                android.util.Log.d("NuancePlugin", "NuancePlugin: Vocalizer.Listener.onSpeakingDone: TTS Complete... success: "+ttsCallbackContext);
 	                ttsCallbackContext.success(returnObject);
-
+                    
 	            }
 	            // for debugging purpose: printing out the speechkit session id
 	            android.util.Log.d("NuancePlugin", "NuancePlugin: Vocalizer.Listener.onSpeakingDone: Leaving method.");
-
+                
 	        }
 	    };
 	    
     }
     
     
-       
+    
 } // end class

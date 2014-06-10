@@ -1,7 +1,7 @@
-package com.nuance.speechkit.phonegap;
+package net.ninjaenterprises.nuance;
 
 public interface ICredentials {
-
+    
 	/**
 	 * Returns the application ID
 	 */

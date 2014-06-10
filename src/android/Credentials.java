@@ -1,14 +1,15 @@
-package com.nuance.speechkit.phonegap;
+package net.ninjaenterprises.nuance;
+import net.ninjaenterprises.nuance.ICredentials;
 
 public class Credentials implements ICredentials {
-
+    
 	public String getAppId() {
-		return /* add your application id here */;
+		return "";
 	}
-
+    
 	public byte[] getAppKey() {
-		byte[] key = /* add your app key here */;
-		return key; 
+		byte[] key = {};
+		return key;
 	}
-
+    
 }
