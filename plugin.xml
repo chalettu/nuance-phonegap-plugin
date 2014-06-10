@@ -32,4 +32,16 @@
             <framework src="AudioToolbox.framework" /> 
             <framework src="CoreGraphics.framework" /> 
         </platform>
+         <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="NuancePlugin" >
+                <param name="android-package" value="net.ninjaenterprises.nuance.NuancePlugin"/>
+            </feature>
+        </config-file>
+        <source-file src="src/android/ICredentials.java" target-dir="src/net/ninjaenterprises/nuance" />
+        <source-file src="src/android/Credentials.java" target-dir="src/net/ninjaenterprises/nuance" />
+        <source-file src="src/android/NuancePlugin.java" target-dir="src/net/ninjaenterprises/nuance" />
+
+    </platform>
+
     </plugin>
