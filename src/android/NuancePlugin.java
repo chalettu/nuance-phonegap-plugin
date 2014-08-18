@@ -45,7 +45,7 @@ public class NuancePlugin extends CordovaPlugin{
 	/**
 	 * Action to start TTS playback
 	 */
-	public static final String ACTION_PLAY_TTS = "playTTS";
+	public static final String ACTION_PLAY_TTS = "startTTS";
 	/**
 	 * Action to stop TTS playback
 	 */
