@@ -41,7 +41,16 @@ Installation Instructions for Android:
 
 6. Add your credentials to the credentials.java as seen in this photo. ![alt tag](https://raw.github.com/chalettu/nuance-phonegap-plugin/master/readme_resources/android_credentials.png)
 
-7. For more documentation on the functions that are available please reference http://nuancedev.github.io/docs/nuancespeechkit.html
+7.  We need to add the appropriate android permissions so the android app can use things like microphone, etc.  Please edit your projects androidManifest.xml like the picture below
+![alt tag](https://raw.github.com/chalettu/nuance-phonegap-plugin/master/readme_resources/android_permissions.png)
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+8. For more documentation on the functions that are available please reference http://nuancedev.github.io/docs/nuancespeechkit.html
 
 
 
